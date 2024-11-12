@@ -19,13 +19,19 @@ public class CarController {
         this.carService = carService;
     }
 
+//    @GetMapping(value = "/cars")
+//    public String showCars(@RequestParam(name = "count", required = false) Integer count, Model model) {
+//        if(count != null && count > 0 && count <= 5) {
+//            model.addAttribute("cars", carService.listCars(count));
+//        } else {
+//            model.addAttribute("cars",carService.getAllCars());
+//        }
+//        return "cars";
+//    }
+    // В CarController
     @GetMapping(value = "/cars")
     public String showCars(@RequestParam(name = "count", required = false) Integer count, Model model) {
-        if(count != null && count > 0 && count <= 5) {
-            model.addAttribute("cars", carService.listCars(count));
-        } else {
-            model.addAttribute("cars",carService.getAllCars());
-        }
+        model.addAttribute("cars", carService.getCarsByCount(count));
         return "cars";
     }
 }

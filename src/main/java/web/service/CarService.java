@@ -9,4 +9,5 @@ public interface CarService {
 
     List<Car> listCars(int number);
     List<Car> getAllCars();
+    List<Car> getCarsByCount(Integer count);
 }
