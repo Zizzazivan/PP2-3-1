@@ -11,6 +11,7 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import web.models.User;
@@ -43,28 +44,41 @@ public class AppConfig {
     private Properties jpaProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
-        properties.put("hibernate.hbm2ddl.auto", env.getProperty("db.hbm2ddl"));
-        properties.put("hibernate.show_sql", env.getProperty("db.show_sql"));
+        properties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
+//        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+//        properties.put("hibernate.show_sql", "true");
+//        properties.put("hibernate.hbm2ddl.auto", "create");
         return properties;
     }
 
 
 
-//    // Конфигурация EntityManagerFactory
-//    @Bean
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-//        LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
-//        entityManagerFactory.setDataSource(getDataSource());
-//        entityManagerFactory.setPackagesToScan("web.models"); // Пакет с вашими сущностями
-//        entityManagerFactory.setJpaProperties(jpaProperties());
-//        return entityManagerFactory;
-//    }
+    // Конфигурация EntityManagerFactory
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+        entityManagerFactory.setDataSource(getDataSource());
+        entityManagerFactory.setPackagesToScan("web.models");
+        entityManagerFactory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        entityManagerFactory.setJpaProperties(jpaProperties());
+        entityManagerFactory.setPersistenceUnitName("User");
+
+        return entityManagerFactory;
+    }
 
 
-//
-//    // Конфигурация PlatformTransactionManager
+
+    // Конфигурация PlatformTransactionManager
 //    @Bean
 //    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
 //        return new JpaTransactionManager(entityManagerFactory);
 //    }
+
+    @Bean
+    public JpaTransactionManager transactionManager() {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return transactionManager;
+    }
 }
